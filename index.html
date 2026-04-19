@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Study Swap – Firebase Version</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+    body {
+      background: #e6f0ff;
+      color: #0f2a4d;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 24px;
+      background: #ffffff;
+      border-bottom: 1px solid #d0ddf5;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      gap: 10px;
+    }
+    .logo-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+    .logo-text-block {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+    .logo-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #123765;
+      letter-spacing: 0.5px;
+    }
+    .logo-subtitle {
+      font-size: 11px;
+      color: #6c7a96;
+    }
+    .header-right {
+      font-size: 13px;
+      color: #4a5a78;
+    }
+    .app-container {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+    }
+    .side-menu {
+      width: 230px;
+      background: #f4f7ff;
+      border-right: 1px solid #d0ddf5;
+      padding: 18px 12px;
+      display: none;
+      flex-shrink: 0;
+    }
+    .menu-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #6c7a96;
+    }
+    .menu-item {
+      padding: 9px 12px;
+      margin-bottom: 8px;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #123765;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .menu-item:hover {
+      background: #e4edff;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+    .menu-item.danger {
+      background: #ffe8ea;
+      color: #b02a37;
+    }
+    .menu-item.danger:hover {
+      background: #ffd4d8;
+    }
+    .main-content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .card {
+      background: #ffffff;
+      color: #123765;
+      border-radius: 18px;
+      padding: 22px 24px 26px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, #cfe0ff 0, transparent 60%);
+      opacity: 0.7;
+    }
+    .card h1, .card h2, .card h3 {
+      color: #123765;
+      margin-bottom: 8px;
+    }
+    .card p {
+      margin-bottom: 8px;
+      color: #3b4b6a;
+    }
+    .intro-subtitle {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #8a96b0;
+      margin-bottom: 4px;
+    }
+    .highlight {
+      color: #1f6feb;
+      font-weight: 700;
+    }
+    .pill {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: #e4edff;
+      color: #1f4f8f;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    .form-row {
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-row label {
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #123765;
+      font-weight: 600;
+    }
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #c4d2f0;
+      font-size: 14px;
+      transition: border 0.15s, box-shadow 0.15s, background 0.15s;
+      background: #f9fbff;
+    }
+    .form-row input:focus,
+    .form-row select:focus,
+    .form-row textarea:focus {
+      outline: none;
+      border-color: #1f6feb;
+      box-shadow: 0 0 0 2px rgba(31,111,235,0.2);
+      background: #ffffff;
+    }
+    .btn-row {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #1f6feb, #1b5fd1);
+      color: #ffffff;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1b5fd1, #174ea6);
+    }
+    .btn-secondary {
+      background: #eef2ff;
+      color: #123765;
+    }
+    .btn-secondary:hover {
+      background: #dde5ff;
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #dc3545, #b02a37);
+      color: #ffffff;
+    }
+    .btn-danger:hover {
+      background: linear-gradient(135deg, #b02a37, #842029);
+    }
+    .btn-success {
+      background: linear-gradient(135deg, #198754, #157347);
+      color: #ffffff;
+    }
+    .btn-success:hover {
+      background: linear-gradient(135deg, #157347, #0f5132);
+    }
+    .link {
+      font-size: 13px;
+      color: #1f6feb;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .error {
+      color: #dc3545;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .info {
+      color: #1f6feb;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .flex {
+      display: flex;
+    }
+    .flex-wrap {
+      flex-wrap: wrap;
+    }
+    .gap-20 { gap: 20px; }
+    .mt-10 { margin-top: 10px; }
+    .mt-20 { margin-top: 20px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      background: #f9fbff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #d6e0f5;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #e4edff;
+      color: #123765;
+      font-weight: 600;
+    }
+    tr:nth-child(even) {
+      background: #ffffff;
+    }
+    .podium {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .podium-tier {
+      width: 130px;
+      text-align: center;
+      color: #123765;
+    }
+    .podium-box {
+      border-radius: 10px 10px 0 0;
+      padding: 10px;
+      background: #e4edff;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+    .podium-box.gold {
+      background: linear-gradient(135deg, #ffe58f, #ffd666);
+      height: 130px;
+    }
+    .podium-box.silver {
+      background: linear-gradient(135deg, #f0f0f0, #d9d9d9);
+      height: 100px;
+    }
+    .podium-box.bronze {
+      background: linear-gradient(135deg, #f4b183, #e69138);
+      height: 80px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #123765;
+      color: #ffffff;
+      margin-top: 6px;
+    }
+    .rating-stars span {
+      cursor: pointer;
+      font-size: 18px;
+      color: #c4d2f0;
+    }
+    .rating-stars span.active {
+      color: #ffc107;
+    }
+    .hidden {
+      display: none !important;
+    }
+    @media (max-width: 900px) {
+      .app-container {
+        flex-direction: column;
+      }
+      .side-menu {
+        width: 100%;
+        display: none;
+        border-right: none;
+        border-bottom: 1px solid #d0ddf5;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" id="logoHome">
+      <img src="studyswap-logo.jpeg" alt="Study Swap Logo" class="logo-img">
+      <div class="logo-text-block">
+        <div class="logo-title">Study Swap</div>
+        <div class="logo-subtitle">Sessions · Files · Leaderboard</div>
+      </div>
+    </div>
+    <div class="header-right" id="headerUserInfo">
+      Not signed in
+    </div>
+  </header>
+
+  <div class="app-container">
+    <nav class="side-menu" id="sideMenu">
+      <div class="menu-title">Menu</div>
+      <div class="menu-item" data-page="home">Home</div>
+      <div class="menu-item" data-page="book">Book a Session</div>
+      <div class="menu-item" data-page="leaderboard">Leaderboard</div>
+      <div class="menu-item" data-page="files">Session Files</div>
+      <div class="menu-item" data-page="host" id="hostMenuItem">Host Dashboard</div>
+      <div class="menu-item danger" id="logoutBtn">Log out</div>
+    </nav>
+
+    <main class="main-content">
+      <!-- INTRO / AUTH -->
+      <section class="card" id="introCard">
+        <div class="intro-subtitle">Welcome to</div>
+        <h1>Study Swap</h1>
+        <p>
+          A peer‑to‑peer platform where students <span class="highlight">book sessions</span>,
+          <span class="highlight">share materials</span>, and <span class="highlight">climb the leaderboard</span>.
+        </p>
+        <p>
+          Please <strong>sign up</strong> or <strong>sign in</strong> to access Study Swap.
+        </p>
+        <div class="mt-10">
+          <span class="pill">IGCSE</span>
+          <span class="pill">SAT</span>
+          <span class="pill">Sessions · Files · Leaderboard</span>
+        </div>
+
+        <div class="mt-20 flex flex-wrap gap-20">
+          <!-- SIGN UP -->
+          <div style="flex:1; min-width:260px;">
+            <h3>Sign Up</h3>
+            <div class="form-row">
+              <label for="suName">Student Name</label>
+              <input id="suName" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="suGrade">Student Grade</label>
+              <input id="suGrade" type="text" placeholder="e.g. Grade 10" />
+            </div>
+            <div class="form-row">
+              <label for="suEmail">Gmail</label>
+              <input id="suEmail" type="email" />
+            </div>
+            <div class="form-row">
+              <label for="suPassword">Password</label>
+              <input id="suPassword" type="password" />
+            </div>
+            <div class="form-row">
+              <label for="suCurriculum">Curriculum</label>
+              <select id="suCurriculum">
+                <option value="">Select curriculum</option>
+                <option value="IGCSE">IGCSE</option>
+                <option value="SAT">SAT</option>
+              </select>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="signUpBtn">Sign Up</button>
+            </div>
+            <div class="error" id="suError"></div>
+            <div class="info" id="suInfo"></div>
+          </div>
+
+          <!-- SIGN IN -->
+          <div style="flex:1; min-width:260px;">
+            <h3>Sign In</h3>
+            <div class="form-row">
+              <label for="siIdentifier">Student Name or Gmail</label>
+              <input id="siIdentifier" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="siPassword">Password</label>
+              <input id="siPassword" type="password" />
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="signInBtn">Sign In</button>
+            </div>
+            <div class="error" id="siError"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOME -->
+      <section class="card hidden" id="homePage">
+        <h2>Home</h2>
+        <p id="welcomeText"></p>
+        <p class="mt-10">
+          Use the side menu to <strong>book sessions</strong>, view the
+          <strong>leaderboard</strong>, or access <strong>session files</strong>.
+        </p>
+        <p class="mt-10">
+          You are currently filtered to:
+          <span class="highlight" id="currentCurriculum"></span> students only.
+        </p>
+      </section>
+
+      <!-- BOOK A SESSION -->
+      <section class="card hidden" id="bookPage">
+        <h2>Book a Session</h2>
+        <p>
+          Browse other students in your curriculum, view their availability and description, and book a session.
+          All signed‑up users can also become hosts by creating sessions.
+        </p>
+
+        <div class="mt-20">
+          <h3>Available Hosts (same curriculum)</h3>
+          <table id="hostsTable">
+            <thead>
+              <tr>
+                <th>Host</th>
+                <th>Curriculum</th>
+                <th>Availability</th>
+                <th>Description</th>
+                <th>Points</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="mt-20">
+          <h3>Create a Session (Become a Host)</h3>
+          <div class="form-row">
+            <label for="hostAvailability">Your Availability (short description)</label>
+            <input id="hostAvailability" type="text" placeholder="e.g. Evenings 6–8 PM, Riyadh time" />
+          </div>
+          <div class="form-row">
+            <label for="hostDescription">Session Description (what you will teach)</label>
+            <textarea id="hostDescription" rows="3" placeholder="e.g. Algebra basics, exam tips, past paper solving"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-success" id="createSessionBtn">Create / Update My Session</button>
+          </div>
+          <div class="info" id="hostInfo"></div>
+        </div>
+
+        <div class="mt-20">
+          <h3>My Incoming Session Requests</h3>
+          <table id="requestsTable">
+            <thead>
+              <tr>
+                <th>From</th>
+                <th>Status</th>
+                <th>Meet Link</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="mt-20">
+          <h3>My Booked Sessions</h3>
+          <table id="bookedTable">
+            <thead>
+              <tr>
+                <th>Host</th>
+                <th>Status</th>
+                <th>Meet Link</th>
+                <th>Rate</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- LEADERBOARD -->
+      <section class="card hidden" id="leaderboardPage">
+        <h2>Leaderboard</h2>
+        <p>
+          Users are ranked by total points earned from session ratings.
+          1 star = 1 point, 5 stars = 5 points.
+        </p>
+
+        <div class="podium" id="podium"></div>
+
+        <h3>Top 4–15</h3>
+        <table id="leaderboardTable">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>Curriculum</th>
+              <th>Points</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- SESSION FILES -->
+      <section class="card hidden" id="filesPage">
+        <h2>Session Files</h2>
+        <p>
+          Hosts can upload descriptions of files/materials used in sessions.
+          All users who attended a session can access its materials.
+        </p>
+
+        <div class="mt-20">
+          <h3>Upload Session Materials (Host)</h3>
+          <div class="form-row">
+            <label for="fileSessionId">Session ID (from your hosted sessions)</label>
+            <input id="fileSessionId" type="text" />
+          </div>
+          <div class="form-row">
+            <label for="fileDescription">Material Description / Link</label>
+            <textarea id="fileDescription" rows="3" placeholder="e.g. PDF link, notes summary, Google Drive link"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-success" id="uploadFileBtn">Upload Material</button>
+          </div>
+          <div class="info" id="fileUploadInfo"></div>
+          <div class="error" id="fileUploadError"></div>
+        </div>
+
+        <div class="mt-20">
+          <h3>Materials for Sessions I Attended</h3>
+          <table id="filesTable">
+            <thead>
+              <tr>
+                <th>Session ID</th>
+                <th>Host</th>
+                <th>Description / Link</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- HOST DASHBOARD -->
+      <section class="card hidden" id="hostPage">
+        <h2>Host Dashboard</h2>
+        <p>
+          You are logged in as <span class="highlight">Admin</span>.  
+          You can view users and delete accounts.  
+        </p>
+
+        <div class="mt-20">
+          <h3>All Users</h3>
+          <table id="hostUsersTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Gmail</th>
+                <th>Grade</th>
+                <th>Curriculum</th>
+                <th>Points</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      getDoc,
+      getDocs,
+      collection,
+      query,
+      where,
+      updateDoc,
+      addDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFeu5bsLacvNCYm1CKJMSmr44ILUAu-2w",
+      authDomain: "studyswap-467c8.firebaseapp.com",
+      projectId: "studyswap-467c8",
+      storageBucket: "studyswap-467c8.firebasestorage.app",
+      messagingSenderId: "1000255945023",
+      appId: "1:1000255945023:web:d7b1a69a86f1b4192e3b8a",
+      measurementId: "G-87LRKBFVDY"
+    };
+
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Hidden host account (local-only, not in Firebase Auth)
+    const HOST_EMAIL = "Remas1806@gmail.com";
+    const HOST_PASSWORD = "REMASHOST";
+    const HOST_NAME = "Admin";
+    const HOST_CURRICULUM = "IGCSE";
+
+    let currentUser = null; // {id, name, email, grade, curriculum, points, isHost}
+
+    // DOM refs
+    const introCard = document.getElementById('introCard');
+    const homePage = document.getElementById('homePage');
+    const bookPage = document.getElementById('bookPage');
+    const leaderboardPage = document.getElementById('leaderboardPage');
+    const filesPage = document.getElementById('filesPage');
+    const hostPage = document.getElementById('hostPage');
+    const sideMenu = document.getElementById('sideMenu');
+    const hostMenuItem = document.getElementById('hostMenuItem');
+    const headerUserInfo = document.getElementById('headerUserInfo');
+    const logoHome = document.getElementById('logoHome');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const welcomeText = document.getElementById('welcomeText');
+    const currentCurriculumSpan = document.getElementById('currentCurriculum');
+
+    const signUpBtn = document.getElementById('signUpBtn');
+    const signInBtn = document.getElementById('signInBtn');
+    const suError = document.getElementById('suError');
+    const suInfo = document.getElementById('suInfo');
+    const siError = document.getElementById('siError');
+
+    const hostsTableBody = document.querySelector('#hostsTable tbody');
+    const requestsTableBody = document.querySelector('#requestsTable tbody');
+    const bookedTableBody = document.querySelector('#bookedTable tbody');
+    const hostAvailabilityInput = document.getElementById('hostAvailability');
+    const hostDescriptionInput = document.getElementById('hostDescription');
+    const createSessionBtn = document.getElementById('createSessionBtn');
+    const hostInfo = document.getElementById('hostInfo');
+
+    const podiumDiv = document.getElementById('podium');
+    const leaderboardTableBody = document.querySelector('#leaderboardTable tbody');
+
+    const fileSessionIdInput = document.getElementById('fileSessionId');
+    const fileDescriptionInput = document.getElementById('fileDescription');
+    const uploadFileBtn = document.getElementById('uploadFileBtn');
+    const fileUploadInfo = document.getElementById('fileUploadInfo');
+    const fileUploadError = document.getElementById('fileUploadError');
+    const filesTableBody = document.querySelector('#filesTable tbody');
+
+    const hostUsersTableBody = document.querySelector('#hostUsersTable tbody');
+
+    function showOnly(section) {
+      [introCard, homePage, bookPage, leaderboardPage, filesPage, hostPage].forEach(s => {
+        s.classList.add('hidden');
+      });
+      if (section) section.classList.remove('hidden');
+    }
+
+    function isHostUserLocal(user) {
+      return user && user.email === HOST_EMAIL && user.isHost;
+    }
+
+    function requireAuth() {
+      if (!currentUser) {
+        sideMenu.style.display = 'none';
+        showOnly(introCard);
+        throw new Error('Unauthorized');
+      }
+    }
+
+    function updateHomePage() {
+      if (!currentUser) return;
+      welcomeText.textContent =
+        `Welcome, ${currentUser.name} (Grade ${currentUser.grade || 'N/A'}, ${currentUser.curriculum}).`;
+      currentCurriculumSpan.textContent = currentUser.curriculum;
+    }
+
+    function setLoggedInUI() {
+      sideMenu.style.display = 'block';
+      hostMenuItem.style.display = currentUser.isHost ? 'block' : 'none';
+      headerUserInfo.textContent =
+        `${currentUser.name} (${currentUser.curriculum})${currentUser.isHost ? ' · Host' : ''}`;
+      updateHomePage();
+      refreshAllViews();
+      showOnly(homePage);
+    }
+
+    function setLoggedOutUI() {
+      currentUser = null;
+      sideMenu.style.display = 'none';
+      headerUserInfo.textContent = 'Not signed in';
+      showOnly(introCard);
+    }
+
+    // Sign up (Firebase Auth + Firestore user doc)
+    signUpBtn.addEventListener('click', async () => {
+      const name = document.getElementById('suName').value.trim();
+      const grade = document.getElementById('suGrade').value.trim();
+      const email = document.getElementById('suEmail').value.trim().toLowerCase();
+      const password = document.getElementById('suPassword').value;
+      const curriculum = document.getElementById('suCurriculum').value;
+
+      suError.textContent = '';
+      suInfo.textContent = '';
+
+      if (!name || !grade || !email || !password || !curriculum) {
+        suError.textContent = 'Please fill in all fields.';
+        return;
+      }
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = cred.user.uid;
+        await setDoc(doc(db, "users", uid), {
+          name,
+          grade,
+          email,
+          curriculum,
+          points: 0
+        });
+        suInfo.textContent = 'Sign up successful. You are now logged in.';
+      } catch (err) {
+        suError.textContent = err.message;
+      }
+    });
+
+    // Sign in (host local OR Firebase Auth)
+    signInBtn.addEventListener('click', async () => {
+      const identifier = document.getElementById('siIdentifier').value.trim().toLowerCase();
+      const password = document.getElementById('siPassword').value;
+      siError.textContent = '';
+
+      if (!identifier || !password) {
+        siError.textContent = 'Please enter your name/email and password.';
+        return;
+      }
+
+      // Host local login
+      if (identifier === HOST_EMAIL.toLowerCase() && password === HOST_PASSWORD) {
+        currentUser = {
+          id: 'host-local',
+          name: HOST_NAME,
+          grade: 'N/A',
+          email: HOST_EMAIL,
+          curriculum: HOST_CURRICULUM,
+          points: 0,
+          isHost: true
+        };
+        setLoggedInUI();
+        return;
+      }
+
+      try {
+        let emailToUse = identifier;
+
+        // If identifier is not an email, try to find by name
+        if (!identifier.includes('@')) {
+          const usersSnap = await getDocs(
+            query(collection(db, "users"), where("name", "==", identifier))
+          );
+          if (usersSnap.empty) {
+            siError.textContent = 'No user found with that name.';
+            return;
+          }
+          const userDoc = usersSnap.docs[0];
+          emailToUse = userDoc.data().email;
+        }
+
+        await signInWithEmailAndPassword(auth, emailToUse, password);
+      } catch (err) {
+        siError.textContent = 'Invalid credentials.';
+      }
+    });
+
+    // Auth state listener
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        // If we previously logged in as local host, keep that
+        if (currentUser && currentUser.isHost && currentUser.id === 'host-local') {
+          setLoggedInUI();
+          return;
+        }
+        setLoggedOutUI();
+        return;
+      }
+
+      // Firebase user
+      const uid = user.uid;
+      const userRef = doc(db, "users", uid);
+      const snap = await getDoc(userRef);
+      if (!snap.exists()) {
+        // Create doc if missing
+        await setDoc(userRef, {
+          name: user.email.split('@')[0],
+          grade: 'N/A',
+          email: user.email,
+          curriculum: 'IGCSE',
+          points: 0
+        });
+      }
+      const data = (await getDoc(userRef)).data();
+      currentUser = {
+        id: uid,
+        name: data.name,
+        grade: data.grade,
+        email: data.email,
+        curriculum: data.curriculum,
+        points: data.points || 0,
+        isHost: false
+      };
+      setLoggedInUI();
+    });
+
+    // Logo click
+    logoHome.addEventListener('click', () => {
+      if (currentUser) showOnly(homePage);
+      else showOnly(introCard);
+    });
+
+    // Side menu navigation
+    document.querySelectorAll('.side-menu .menu-item').forEach(item => {
+      const page = item.getAttribute('data-page');
+      if (!page) return;
+      item.addEventListener('click', () => {
+        try { requireAuth(); } catch (e) { return; }
+        if (page === 'home') showOnly(homePage);
+        if (page === 'book') { showOnly(bookPage); refreshBookPage(); }
+        if (page === 'leaderboard') { showOnly(leaderboardPage); refreshLeaderboard(); }
+        if (page === 'files') { showOnly(filesPage); refreshFilesPage(); }
+        if (page === 'host' && currentUser.isHost) { showOnly(hostPage); refreshHostPage(); }
+      });
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', async () => {
+      if (currentUser && currentUser.isHost && currentUser.id === 'host-local') {
+        currentUser = null;
+        setLoggedOutUI();
+        return;
+      }
+      await signOut(auth);
+    });
+
+    // Helper: random ID
+    function generateId(prefix) {
+      return prefix + '_' + Math.random().toString(36).substring(2, 10);
+    }
+
+    // BOOK PAGE LOGIC
+    async function refreshBookPage() {
+      if (!currentUser) return;
+
+      hostsTableBody.innerHTML = '';
+      requestsTableBody.innerHTML = '';
+      bookedTableBody.innerHTML = '';
+
+      // Load all users
+      const usersSnap = await getDocs(collection(db, "users"));
+      const users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Load all sessions
+      const sessionsSnap = await getDocs(collection(db, "sessions"));
+      const sessions = sessionsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Available hosts: sessions with same curriculum, host != currentUser
+      const sameCurrSessions = sessions.filter(s =>
+        s.curriculum === currentUser.curriculum && s.hostId !== currentUser.id
+      );
+
+      for (const s of sameCurrSessions) {
+        const host = users.find(u => u.id === s.hostId);
+        if (!host) continue;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${host.name}</td>
+          <td>${host.curriculum}</td>
+          <td>${s.availability || 'No availability set'}</td>
+          <td>${s.description || ''}</td>
+          <td>${host.points || 0}</td>
+          <td>
+            <button class="btn btn-primary btn-sm" data-session-id="${s.id}">Book</button>
+          </td>
+        `;
+        hostsTableBody.appendChild(tr);
+      }
+
+      hostsTableBody.querySelectorAll('button[data-session-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sessionId = btn.getAttribute('data-session-id');
+          bookSession(sessionId);
+        });
+      });
+
+      // My incoming requests (if I'm a host with a session)
+      const mySessions = sessions.filter(s => s.hostId === currentUser.id);
+      const myRequests = [];
+      mySessions.forEach(s => {
+        (s.requests || []).forEach(r => myRequests.push({ session: s, request: r }));
+      });
+
+      for (const { session, request } of myRequests) {
+        const fromUser = users.find(u => u.id === request.userId);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${fromUser ? fromUser.name : 'Unknown'}</td>
+          <td>${request.status}</td>
+          <td>${session.meetLink || ''}</td>
+          <td>
+            <button class="btn btn-success btn-sm" data-action="accept" data-session-id="${session.id}" data-request-id="${request.id}">Accept</button>
+            <button class="btn btn-danger btn-sm" data-action="decline" data-session-id="${session.id}" data-request-id="${request.id}">Decline</button>
+            <button class="btn btn-primary btn-sm" data-action="meet" data-session-id="${session.id}">Send Meet Link</button>
+          </td>
+        `;
+        requestsTableBody.appendChild(tr);
+      }
+
+      requestsTableBody.querySelectorAll('button').forEach(btn => {
+        const action = btn.getAttribute('data-action');
+        const sessionId = btn.getAttribute('data-session-id');
+        const requestId = btn.getAttribute('data-request-id');
+        btn.addEventListener('click', () => {
+          if (action === 'accept') updateRequestStatus(sessionId, requestId, 'Accepted');
+          if (action === 'decline') updateRequestStatus(sessionId, requestId, 'Declined');
+          if (action === 'meet') createMeetLink(sessionId);
+        });
+      });
+
+      // My booked sessions
+      const booked = [];
+      sessions.forEach(s => {
+        (s.requests || []).forEach(r => {
+          if (r.userId === currentUser.id) booked.push({ session: s, request: r });
+        });
+      });
+
+      for (const { session, request } of booked) {
+        const host = users.find(u => u.id === session.hostId);
+        const ratingHtml = request.status === 'Completed'
+          ? `<span>Rated: ${request.rating || 'N/A'} ★</span>`
+          : `<div class="rating-stars" data-session-id="${session.id}" data-request-id="${request.id}">
+               <span data-value="1">★</span>
+               <span data-value="2">★</span>
+               <span data-value="3">★</span>
+               <span data-value="4">★</span>
+               <span data-value="5">★</span>
+             </div>
+             <button class="btn btn-success btn-sm" data-complete-session="${session.id}" data-request-id="${request.id}">Mark Completed</button>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${host ? host.name : 'Unknown'}</td>
+          <td>${request.status}</td>
+          <td>${session.meetLink || ''}</td>
+          <td>${ratingHtml}</td>
+        `;
+        bookedTableBody.appendChild(tr);
+      }
+
+      bookedTableBody.querySelectorAll('.rating-stars span').forEach(star => {
+        star.addEventListener('click', () => {
+          const value = parseInt(star.getAttribute('data-value'), 10);
+          const container = star.parentElement;
+          const sessionId = container.getAttribute('data-session-id');
+          const requestId = container.getAttribute('data-request-id');
+          setRating(sessionId, requestId, value);
+          container.querySelectorAll('span').forEach(s => {
+            const v = parseInt(s.getAttribute('data-value'), 10);
+            s.classList.toggle('active', v <= value);
+          });
+        });
+      });
+
+      bookedTableBody.querySelectorAll('button[data-complete-session]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sessionId = btn.getAttribute('data-complete-session');
+          const requestId = btn.getAttribute('data-request-id');
+          completeSession(sessionId, requestId);
+        });
+      });
+    }
+
+    async function bookSession(sessionId) {
+      if (!currentUser) return;
+      const sessionRef = doc(db, "sessions", sessionId);
+      const snap = await getDoc(sessionRef);
+      if (!snap.exists()) return;
+      const data = snap.data();
+
+      if (data.hostId === currentUser.id) {
+        alert('You cannot book your own session.');
+        return;
+      }
+
+      const requests = data.requests || [];
+      if (requests.some(r => r.userId === currentUser.id)) {
+        alert('You already requested this session.');
+        return;
+      }
+
+      requests.push({
+        id: generateId('req'),
+        userId: currentUser.id,
+        status: 'Pending',
+        rating: null
+      });
+
+      await updateDoc(sessionRef, { requests });
+      alert('Session request sent.');
+      refreshBookPage();
+    }
+
+    async function updateRequestStatus(sessionId, requestId, status) {
+      const sessionRef = doc(db, "sessions", sessionId);
+      const snap = await getDoc(sessionRef);
+      if (!snap.exists()) return;
+      const data = snap.data();
+      const requests = data.requests || [];
+      const req = requests.find(r => r.id === requestId);
+      if (!req) return;
+      req.status = status;
+      await updateDoc(sessionRef, { requests });
+      alert(`Request ${status}.`);
+      refreshBookPage();
+    }
+
+    async function createMeetLink(sessionId) {
+      const sessionRef = doc(db, "sessions", sessionId);
+      const snap = await getDoc(sessionRef);
+      if (!snap.exists()) return;
+      const meetLink = 'https://meet.google.com/' + Math.random().toString(36).substring(2, 8);
+      await updateDoc(sessionRef, { meetLink });
+      alert('Simulated: Google Meet link created and shared.');
+      refreshBookPage();
+    }
+
+    async function setRating(sessionId, requestId, rating) {
+      const sessionRef = doc(db, "sessions", sessionId);
+      const snap = await getDoc(sessionRef);
+      if (!snap.exists()) return;
+      const data = snap.data();
+      const requests = data.requests || [];
+      const req = requests.find(r => r.id === requestId);
+      if (!req) return;
+      req.rating = rating;
+
+      await updateDoc(sessionRef, { requests });
+
+      // Add points to host
+      const hostId = data.hostId;
+      if (hostId && hostId !== 'host-local') {
+        const hostRef = doc(db, "users", hostId);
+        const hostSnap = await getDoc(hostRef);
+        if (hostSnap.exists()) {
+          const hostData = hostSnap.data();
+          const newPoints = (hostData.points || 0) + rating;
+          await updateDoc(hostRef, { points: newPoints });
+        }
+      }
+
+      alert(`You rated this session ${rating} star(s).`);
+      refreshBookPage();
+      refreshLeaderboard();
+    }
+
+    async function completeSession(sessionId, requestId) {
+      const sessionRef = doc(db, "sessions", sessionId);
+      const snap = await getDoc(sessionRef);
+      if (!snap.exists()) return;
+      const data = snap.data();
+      const requests = data.requests || [];
+      const req = requests.find(r => r.id === requestId);
+      if (!req) return;
+      req.status = 'Completed';
+      await updateDoc(sessionRef, { requests });
+      alert('Session marked as completed.');
+      refreshBookPage();
+    }
+
+    // Create / update session
+    createSessionBtn.addEventListener('click', async () => {
+      if (!currentUser) return;
+      const availability = hostAvailabilityInput.value.trim();
+      const description = hostDescriptionInput.value.trim();
+      hostInfo.textContent = '';
+
+      if (!availability) {
+        hostInfo.textContent = 'Please enter your availability.';
+        return;
+      }
+
+      // Check if session exists for this host
+      const q = query(collection(db, "sessions"), where("hostId", "==", currentUser.id));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        const docRef = await addDoc(collection(db, "sessions"), {
+          hostId: currentUser.id,
+          availability,
+          description,
+          meetLink: '',
+          curriculum: currentUser.curriculum,
+          requests: []
+        });
+        hostInfo.textContent = `Session created. Your Session ID is ${docRef.id}.`;
+      } else {
+        const docRef = snap.docs[0].ref;
+        await updateDoc(docRef, {
+          availability,
+          description
+        });
+        hostInfo.textContent = `Session updated. Session ID is ${snap.docs[0].id}.`;
+      }
+
+      refreshBookPage();
+    });
+
+    // LEADERBOARD
+    async function refreshLeaderboard() {
+      const usersSnap = await getDocs(collection(db, "users"));
+      let users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Remove host email if ever stored
+      users = users.filter(u => u.email !== HOST_EMAIL);
+      users.sort((a, b) => (b.points || 0) - (a.points || 0));
+
+      podiumDiv.innerHTML = '';
+      leaderboardTableBody.innerHTML = '';
+
+      const top3 = users.slice(0, 3);
+      const rest = users.slice(3, 15);
+
+      const badges = ['Gold', 'Silver', 'Bronze'];
+      const classes = ['gold', 'silver', 'bronze'];
+
+      top3.forEach((u, index) => {
+        if (!u) return;
+        const tier = document.createElement('div');
+        tier.className = 'podium-tier';
+        tier.innerHTML = `
+          <div class="podium-box ${classes[index]}">
+            <div><strong>${index + 1}.</strong> ${u.name}</div>
+            <div>${u.points || 0} pts</div>
+            <div class="badge">${badges[index]} Badge</div>
+          </div>
+        `;
+        podiumDiv.appendChild(tier);
+      });
+
+      rest.forEach((u, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${i + 4}</td>
+          <td>${u.name}</td>
+          <td>${u.curriculum}</td>
+          <td>${u.points || 0}</td>
+        `;
+        leaderboardTableBody.appendChild(tr);
+      });
+    }
+
+    // FILES
+    async function refreshFilesPage() {
+      if (!currentUser) return;
+
+      filesTableBody.innerHTML = '';
+
+      const sessionsSnap = await getDocs(collection(db, "sessions"));
+      const sessions = sessionsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      const myAttendedSessionIds = [];
+      sessions.forEach(s => {
+        (s.requests || []).forEach(r => {
+          if (r.userId === currentUser.id && (r.status === 'Accepted' || r.status === 'Completed')) {
+            myAttendedSessionIds.push(s.id);
+          }
+        });
+      });
+
+      const filesSnap = await getDocs(collection(db, "files"));
+      const files = filesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      const usersSnap = await getDocs(collection(db, "users"));
+      const users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      files
+        .filter(f => myAttendedSessionIds.includes(f.sessionId))
+        .forEach(f => {
+          const session = sessions.find(s => s.id === f.sessionId);
+          const host = session ? users.find(u => u.id === session.hostId) : null;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${f.sessionId}</td>
+            <td>${host ? host.name : 'Unknown'}</td>
+            <td>${f.description}</td>
+          `;
+          filesTableBody.appendChild(tr);
+        });
+    }
+
+    uploadFileBtn.addEventListener('click', async () => {
+      if (!currentUser) return;
+      const sessionId = fileSessionIdInput.value.trim();
+      const description = fileDescriptionInput.value.trim();
+      fileUploadInfo.textContent = '';
+      fileUploadError.textContent = '';
+
+      if (!sessionId || !description) {
+        fileUploadError.textContent = 'Please enter session ID and material description.';
+        return;
+      }
+
+      const sessionRef = doc(db, "sessions", sessionId);
+      const snap = await getDoc(sessionRef);
+      if (!snap.exists()) {
+        fileUploadError.textContent = 'Session not found.';
+        return;
+      }
+      const data = snap.data();
+      if (data.hostId !== currentUser.id) {
+        fileUploadError.textContent = 'Only the host of this session can upload materials.';
+        return;
+      }
+
+      await addDoc(collection(db, "files"), {
+        sessionId,
+        hostId: currentUser.id,
+        description
+      });
+
+      fileUploadInfo.textContent = 'Material uploaded.';
+      fileDescriptionInput.value = '';
+      refreshFilesPage();
+    });
+
+    // HOST DASHBOARD (Admin)
+    async function refreshHostPage() {
+      if (!currentUser || !currentUser.isHost) return;
+      hostUsersTableBody.innerHTML = '';
+
+      const usersSnap = await getDocs(collection(db, "users"));
+      const users = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      users.forEach(u => {
+        if (u.email === HOST_EMAIL) return;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${u.name}</td>
+          <td>${u.email}</td>
+          <td>${u.grade}</td>
+          <td>${u.curriculum}</td>
+          <td>${u.points || 0}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" data-user-id="${u.id}">Delete</button>
+          </td>
+        `;
+        hostUsersTableBody.appendChild(tr);
+      });
+
+      hostUsersTableBody.querySelectorAll('button[data-user-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const userId = btn.getAttribute('data-user-id');
+          hostDeleteUser(userId);
+        });
+      });
+    }
+
+    async function hostDeleteUser(userId) {
+      if (!confirm('Are you sure you want to delete this user?')) return;
+
+      // Delete user doc
+      await setDoc(doc(db, "users", userId), {}, { merge: false }); // overwrite with empty
+      // In Firestore client SDK we cannot delete Auth user; this only removes from users collection.
+      alert('User data deleted from Firestore (Auth account remains).');
+      refreshHostPage();
+      refreshAllViews();
+    }
+
+    async function refreshAllViews() {
+      if (!currentUser) return;
+      await refreshBookPage();
+      await refreshLeaderboard();
+      await refreshFilesPage();
+      if (currentUser.isHost) await refreshHostPage();
+    }
+
+    // Initial state
+    setLoggedOutUI();
+  </script>
+</body>
+</html>
